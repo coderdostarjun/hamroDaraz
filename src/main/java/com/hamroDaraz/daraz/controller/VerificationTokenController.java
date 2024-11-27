@@ -36,3 +36,4 @@ public class VerificationTokenController {
         return "OTP verified successfully. Your account is now active.";
     }
     }
+

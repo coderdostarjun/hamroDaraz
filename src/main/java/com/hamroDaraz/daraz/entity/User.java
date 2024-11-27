@@ -31,7 +31,11 @@ public class User {
     private boolean isEnabled=false;
 
     //user table mapped vako xa hai vanew batauxa
-    @OneToOne(mappedBy = "user")//shop class le relationship maintain gareko xa user lai mapped garera vanew bujnaana
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)//shop class le relationship maintain gareko xa user lai mapped garera vanew bujnaana
     private Shop shop;
+
+    @OneToOne(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    private VerificationToken verificationToken;
+
 
 }

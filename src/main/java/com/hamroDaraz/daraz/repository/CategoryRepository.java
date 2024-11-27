@@ -1,0 +1,7 @@
+package com.hamroDaraz.daraz.repository;
+
+import com.hamroDaraz.daraz.entity.Category;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CategoryRepository extends JpaRepository<Category,Long> {
+}
