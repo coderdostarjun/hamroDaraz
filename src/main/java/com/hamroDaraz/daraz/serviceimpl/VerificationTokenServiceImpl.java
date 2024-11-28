@@ -7,6 +7,7 @@ import com.hamroDaraz.daraz.entity.VerificationToken;
 import com.hamroDaraz.daraz.repository.UserRepository;
 import com.hamroDaraz.daraz.repository.VerificationTokenRepository;
 import com.hamroDaraz.daraz.service.VerificationTokenService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
     public VerificationToken getToken(String otp) {
         VerificationToken token = verificationTokenRepository.findByToken(otp);
         if (token != null && isTokenExpired(token)) {
+            System.out.println("Token expired: " + token.getId());
             deleteToken(token);
             return null;
         }
@@ -42,9 +44,22 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         return LocalDateTime.now().isAfter(token.getCreatedDate().plusMinutes(OTP_EXPIRATION_MINUTES));
     }
 
+    @Transactional
     @Override
     public void deleteToken(VerificationToken token) {
+
+        System.out.println("Attempting to delete token with ID: " + token.getId());
+
         verificationTokenRepository.delete(token);
+        verificationTokenRepository.flush(); // Ensure the deletion is committed to the database
+
+        System.out.println("Token deleted successfully for ID: " + token.getId());
+//        verificationTokenRepository.delete(token);
+//        System.out.println("delete successfully");
+
+//        System.out.println("code ako xa : with "+ token.getId());
+//        verificationTokenRepository.delete(token);
+
     }
 
 
