@@ -7,7 +7,7 @@ import java.util.List;
 @Service
 public interface ProductService {
     //create
-    ProductDto addProduct(Long shopId, ProductDto productDto);
+    ProductDto addProduct(Long shopId, Long categoryId,ProductDto productDto);
 
     //update
     ProductDto updateProduct(Long productId,ProductDto productDto);

@@ -10,6 +10,6 @@ import org.springframework.stereotype.Service;
 public interface VerificationTokenService {
     VerificationToken createVerificationToken(User user, String otp);
     VerificationToken getToken(String otp);
-    void deleteToken(VerificationToken token);
+    void deleteToken(Long id);
 
 }

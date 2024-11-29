@@ -7,7 +7,6 @@ import com.hamroDaraz.daraz.entity.VerificationToken;
 import com.hamroDaraz.daraz.repository.UserRepository;
 import com.hamroDaraz.daraz.repository.VerificationTokenRepository;
 import com.hamroDaraz.daraz.service.VerificationTokenService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,7 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         VerificationToken token = verificationTokenRepository.findByToken(otp);
         if (token != null && isTokenExpired(token)) {
             System.out.println("Token expired: " + token.getId());
-            deleteToken(token);
+            deleteToken(token.getId());
             return null;
         }
         return token;
@@ -44,16 +43,16 @@ public class VerificationTokenServiceImpl implements VerificationTokenService {
         return LocalDateTime.now().isAfter(token.getCreatedDate().plusMinutes(OTP_EXPIRATION_MINUTES));
     }
 
-    @Transactional
+
     @Override
-    public void deleteToken(VerificationToken token) {
+    public void deleteToken(Long id) {
 
-        System.out.println("Attempting to delete token with ID: " + token.getId());
+        System.out.println("Attempting to delete token with ID: " + id);
+ verificationTokenRepository.deleteById(id);
+//        verificationTokenRepository.delete(token);
+//        verificationTokenRepository.flush(); // Ensure the deletion is committed to the database
 
-        verificationTokenRepository.delete(token);
-        verificationTokenRepository.flush(); // Ensure the deletion is committed to the database
-
-        System.out.println("Token deleted successfully for ID: " + token.getId());
+        System.out.println("Token deleted successfully for ID: " + id);
 //        verificationTokenRepository.delete(token);
 //        System.out.println("delete successfully");
 

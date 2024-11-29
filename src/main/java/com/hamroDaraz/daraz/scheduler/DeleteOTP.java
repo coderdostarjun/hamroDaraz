@@ -21,7 +21,6 @@ public class DeleteOTP {
     @Autowired
     private UserRepository userRepository;
     @Scheduled(cron = "0 */1 * * * ?")
-    @Transactional
     public void cleanupExpiredTokens() {
         LocalDateTime now = LocalDateTime.now();
         List<VerificationToken> expiredTokens = verificationTokenRepository.findByExpiryDateBefore(now);

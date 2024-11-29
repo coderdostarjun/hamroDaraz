@@ -31,7 +31,8 @@ public class VerificationTokenController {
         user.setEnabled(true);
         userRepository.save(user);
 
-        verificationTokenService.deleteToken(verificationToken);
+        System.out.println(verificationToken.getId()+" "+ verificationToken.getUser().getFirstName());
+        verificationTokenService.deleteToken(verificationToken.getId());
 
         return "OTP verified successfully. Your account is now active.";
     }
