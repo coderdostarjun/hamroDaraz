@@ -29,7 +29,7 @@ public class Product {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime updatedAt;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 

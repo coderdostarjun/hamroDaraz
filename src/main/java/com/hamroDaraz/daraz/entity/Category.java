@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table
 @AllArgsConstructor
@@ -17,6 +19,6 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @OneToOne(mappedBy = "category")  //category table ko sahayatale  foreign key banyo
-    private Product product;
+    @OneToMany(mappedBy = "category")  //category table ko sahayatale  foreign key banyo
+    private List<Product> product;
 }
