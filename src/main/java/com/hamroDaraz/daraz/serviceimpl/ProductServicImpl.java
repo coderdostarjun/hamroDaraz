@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ProductServicImpl implements ProductService {
     @Autowired
@@ -40,21 +42,36 @@ public class ProductServicImpl implements ProductService {
 
     @Override
     public ProductDto updateProduct(Long productId, ProductDto productDto) {
-        return null;
+        Product product=productRepository.findById(productId).orElseThrow(()->new ResourceNotFoundException("product not found"));
+        product.setName(productDto.getName());
+        product.setDescription(productDto.getDescription());
+        product.setImage(productDto.getImage());
+        product.setPrice(productDto.getPrice());
+        product.setStock(productDto.getStock());
+        product.setImage(productDto.getImage());
+        product.setUpdatedAt(LocalDateTime.now());
+       return this.modelMapper.map(productRepository.save(product),ProductDto.class);
     }
 
     @Override
     public ProductDto getProduct(Long productId) {
-        return null;
+        Product product=productRepository.findById(productId).orElseThrow(()->new ResourceNotFoundException("product not found"));
+            return this.modelMapper.map(product, ProductDto.class);
+
     }
 
     @Override
     public List<ProductDto> getAllProduct() {
-        return List.of();
+      List<Product> product= productRepository.findAll();
+       List<ProductDto> productDtosList=product.stream().map((productDto )->
+               this.modelMapper.map(productDto, ProductDto.class)).collect(Collectors.toList());
+       return productDtosList;
     }
 
     @Override
     public void deleteProduct(Long productId) {
+        Product product=productRepository.findById(productId).orElseThrow(()->new ResourceNotFoundException("product not found"));
+         productRepository.delete(product);
 
     }
 }

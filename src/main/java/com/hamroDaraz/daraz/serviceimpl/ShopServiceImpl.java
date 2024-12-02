@@ -68,6 +68,6 @@ public class ShopServiceImpl implements ShopService {
         Shop shop=shopRepository.findById(shopId).orElseThrow(()->new ResourceNotFoundException("Shop not found"));
         shopRepository.delete(shop);
 
-
     }
 }
+

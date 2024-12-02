@@ -1,7 +1,6 @@
 package com.hamroDaraz.daraz.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +14,8 @@ import org.springframework.stereotype.Controller;
 @Getter
 @Setter
 public class Cart {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 }
