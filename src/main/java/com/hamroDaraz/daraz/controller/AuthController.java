@@ -6,6 +6,7 @@ import com.hamroDaraz.daraz.config.JwtTokenHelper;
 import com.hamroDaraz.daraz.constants.MessageConstants;
 import com.hamroDaraz.daraz.dto.*;
 import com.hamroDaraz.daraz.entity.Admin;
+import com.hamroDaraz.daraz.entity.Cart;
 import com.hamroDaraz.daraz.entity.User;
 import com.hamroDaraz.daraz.repository.AdminRepository;
 import com.hamroDaraz.daraz.repository.UserRepository;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -150,6 +152,7 @@ public class AuthController {
                 Authentication authentication = authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(userLoginRequestDto.getEmail(), userLoginRequestDto.getPassword())
                 );
+
                 if (authentication.isAuthenticated()) {
                     userLoginResponseDto.setToken(jwtTokenHelper.generateToken(user.getEmail(), "user"));
                     userLoginResponseDto.setMessage("Login Successfull");

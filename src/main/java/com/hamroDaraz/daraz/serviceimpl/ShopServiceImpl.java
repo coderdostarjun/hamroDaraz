@@ -35,14 +35,28 @@ public class ShopServiceImpl implements ShopService {
        return this.modelMapper.map(newShop,ShopDto.class);
 
     }
-
+//yadi sabai update nagarera kehi field matra update i.e partial update garna paryo vanew patch use garera if lagauna
+    //otherwise if nalagai garda hunxa full update ma ra put request use garan
     @Override
     public ShopDto updateShop(Long shopId, ShopDto shopDto) {
         Shop shop=shopRepository.findById(shopId).orElseThrow(()->new ResourceNotFoundException("Shop not found"));
-        shop.setName(shopDto.getName());
-        shop.setDescription(shopDto.getDescription());
-        shop.setLogo(shopDto.getLogo());
-        shop.setContact_info(shopDto.getContact_info());
+       if(shopDto.getName()!=null)
+       {
+           shop.setName(shopDto.getName());
+       }
+       if (shopDto.getDescription()!=null)
+       {
+           shop.setDescription(shopDto.getDescription());
+       }
+        if (shopDto.getLogo()!=null)
+        {
+            shop.setLogo(shopDto.getLogo());
+        }
+        if (shopDto.getContact_info()!=null)
+        {
+            shop.setContact_info(shopDto.getContact_info());
+
+        }
         shop.setUpdatedAt(LocalDateTime.now());
         Shop newShop=shopRepository.save(shop);
         return this.modelMapper.map(newShop, ShopDto.class);

@@ -3,8 +3,10 @@ package com.hamroDaraz.daraz.serviceimpl;
 import com.hamroDaraz.daraz.config.JwtTokenHelper;
 import com.hamroDaraz.daraz.dto.GetAllUserDetailsDto;
 import com.hamroDaraz.daraz.dto.UserRegisterDto;
+import com.hamroDaraz.daraz.entity.Cart;
 import com.hamroDaraz.daraz.entity.User;
 import com.hamroDaraz.daraz.exception.ResourceNotFoundException;
+import com.hamroDaraz.daraz.repository.CartRepository;
 import com.hamroDaraz.daraz.repository.EmailService;
 import com.hamroDaraz.daraz.repository.UserRepository;
 import com.hamroDaraz.daraz.service.UserService;
@@ -37,6 +39,8 @@ public class UserServiceImpl implements UserService {
     private VerificationTokenService verificationTokenService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private CartRepository cartRepository;
 
 //registerUser
     @Override
@@ -47,8 +51,14 @@ public class UserServiceImpl implements UserService {
         user.setCreatedTime(LocalDateTime.now());
         user.setRole("User");
         user.setEnabled(false);
-        User savedSeller=userRepository.save(user);  //user ko object create hunxa save garda teslai nai pathauna createverficationtoken ma
+        //jaba user create hunxa taba tesko cart create hunxa
+        Cart cart=new Cart();
+        cart.setUser(user);
+        cart.setTotalPrice(0L);
+        cart.setCreatedAt(LocalDateTime.now());
 
+        User savedSeller=userRepository.save(user);  //user ko object create hunxa save garda teslai nai pathauna createverficationtoken ma
+         cartRepository.save(cart);
         String otp = String.format("%06d", (int) (Math.random() * 1000000));//generate otp code
         verificationTokenService.createVerificationToken(savedSeller, otp);//genereate gareko otp ani tesko date,expire date ,ani kuna userko otp verificationTokenService ma rakhyo
         emailService.sendVerificationEmail(savedSeller.getEmail(), otp);//related userko mail ma token send garna ko lagi

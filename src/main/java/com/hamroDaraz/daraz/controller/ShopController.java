@@ -24,7 +24,7 @@ public class ShopController {
       return ResponseEntity.status(HttpStatus.OK).body(createShop);
     }
     //update
-    @PutMapping("/update")
+    @PatchMapping("/update")
     public ResponseEntity<ShopDto> updateShop(@RequestParam Long shopId,@RequestBody ShopDto shopDto)
     {
         ShopDto createShop=shopService.updateShop(shopId,shopDto);
