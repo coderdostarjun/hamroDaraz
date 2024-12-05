@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem,Long> {
+    CartItem findByCartIdAndShopIdAndProductId(Long id, Long shopId, Long productId);
 }
 
 

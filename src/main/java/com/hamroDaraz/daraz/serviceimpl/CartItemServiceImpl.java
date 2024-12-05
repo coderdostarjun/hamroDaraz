@@ -38,27 +38,83 @@ public class CartItemServiceImpl implements CartItemService {
         Product product = productRepository.findById(cartItemDto.getProductId()).orElseThrow(() -> new ResourceNotFoundException("product not found"));
 //         Check if the product belongs to the correct shop
         if (!shop.getId().equals(product.getShop().getId())) {  //imp concept very usefull
+            //yadi shop ko id ra product bata get gareko shop ra tyo get gareko shop ko id same vayena vane
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("The product is not available in this shop.");
         }
-        // Manual mapping for specific fields
-        CartItem cartItem = new CartItem();
-        cartItem.setShopId(cartItemDto.getShopId());
-        cartItem.setProductId(cartItemDto.getProductId());
-        cartItem.setQuantity(cartItemDto.getQuantity());
-        cartItem.setPrice(product.getPrice());
-        cartItem.setCreatedAt(LocalDateTime.now());
-        cartItem.setCart(user.getCart()); // Set the user's cart manually
-
-        // Save the cart item and convert back to DTO
-        CartItem savedCartItem = cartItemRepository.save(cartItem);
-        CartItemDto savedCartItemDto = new CartItemDto(
-                savedCartItem.getShopId(),
-                savedCartItem.getProductId(),
-                savedCartItem.getQuantity()
+        // Check if the same product, shop, and user combination already exists in the cart
+        CartItem existingCartItem = cartItemRepository.findByCartIdAndShopIdAndProductId(
+                user.getCart().getId(),
+                cartItemDto.getShopId(),
+                cartItemDto.getProductId()
         );
 
-        return ResponseEntity.status(HttpStatus.OK).body(savedCartItemDto);
+        if (existingCartItem != null) {
+            // Update the existing cart item
+            int updatedQuantity = existingCartItem.getQuantity() + cartItemDto.getQuantity();
+            product.setStock(product.getStock()-cartItemDto.getQuantity());
+            existingCartItem.setQuantity(updatedQuantity);
+            existingCartItem.setPrice(product.getPrice() * updatedQuantity); // Update total price
+            existingCartItem.setUpdatedAt(LocalDateTime.now());
+            productRepository.save(product);
+
+            CartItem updatedCartItem = cartItemRepository.save(existingCartItem);
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Product quantity updated successfully: " + updatedCartItem.getQuantity());
+        } else {
+            // Create a new cart item if it doesn't exist
+            CartItem newCartItem = new CartItem();
+            newCartItem.setShopId(cartItemDto.getShopId());
+            newCartItem.setProductId(cartItemDto.getProductId());
+            newCartItem.setQuantity(cartItemDto.getQuantity());
+            newCartItem.setPrice(product.getPrice() * cartItemDto.getQuantity()); // Total price
+            newCartItem.setCreatedAt(LocalDateTime.now());
+            newCartItem.setUpdatedAt(LocalDateTime.now());
+            newCartItem.setCart(user.getCart()); // Set the user's cart manually
+
+            CartItem savedCartItem = cartItemRepository.save(newCartItem);
+            product.setStock(product.getStock()-savedCartItem.getQuantity());
+            productRepository.save(product);
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body("Product added to cart successfully: " + savedCartItem.getQuantity());
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        // Manual mapping for specific fields
+//        CartItem cartItem = new CartItem();
+//        if(cartItem.getShopId()!=null )
+//        cartItem.setShopId(cartItemDto.getShopId());
+//        cartItem.setProductId(cartItemDto.getProductId());
+//        cartItem.setQuantity(cartItemDto.getQuantity());
+//        cartItem.setPrice(product.getPrice());
+//        cartItem.setCreatedAt(LocalDateTime.now());
+//        cartItem.setCart(user.getCart()); // Set the user's cart manually
+
+//        // Save the cart item and convert back to DTO
+//        CartItem savedCartItem = cartItemRepository.save(cartItem);
+//        CartItemDto savedCartItemDto = new CartItemDto(
+//                savedCartItem.getShopId(),
+//                savedCartItem.getProductId(),
+//                savedCartItem.getQuantity()
+//        );
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(savedCartItemDto);
 
         //using modelmapper
 //        CartItem cartItem = this.modelMapper.map(cartItemDto, CartItem.class);
