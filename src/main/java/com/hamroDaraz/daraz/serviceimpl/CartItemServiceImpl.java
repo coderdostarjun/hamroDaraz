@@ -32,21 +32,40 @@ public class CartItemServiceImpl implements CartItemService {
     private ModelMapper modelMapper;
 
     @Override
-    public ResponseEntity<?> addProduct(CartItemDto cartItemDto) {
-        CartItem cartItem = this.modelMapper.map(cartItemDto, CartItem.class);
-        User user = userRepository.findById(cartItemDto.getUserId()).orElseThrow(() -> new ResourceNotFoundException("user not found"));
+    public ResponseEntity<?> addProduct(Long userId,CartItemDto cartItemDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("user not found"));
         Shop shop = shopRepository.findById(cartItemDto.getShopId()).orElseThrow(() -> new ResourceNotFoundException("shop not found"));
         Product product = productRepository.findById(cartItemDto.getProductId()).orElseThrow(() -> new ResourceNotFoundException("product not found"));
 //         Check if the product belongs to the correct shop
-        if (!shop.equals(product.getShop()))  //to check whether the product is  available or not in a shop
-        {
+        if (!shop.getId().equals(product.getShop().getId())) {  //imp concept very usefull
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("The product is not available in this shop.");
         }
+        // Manual mapping for specific fields
+        CartItem cartItem = new CartItem();
+        cartItem.setShopId(cartItemDto.getShopId());
+        cartItem.setProductId(cartItemDto.getProductId());
+        cartItem.setQuantity(cartItemDto.getQuantity());
         cartItem.setPrice(product.getPrice());
         cartItem.setCreatedAt(LocalDateTime.now());
-        cartItem.setCart(user.getCart());
-        CartItemDto cartItemDto1 = this.modelMapper.map(cartItemRepository.save(cartItem), CartItemDto.class);
-        return ResponseEntity.status(HttpStatus.OK).body(cartItemDto1);
+        cartItem.setCart(user.getCart()); // Set the user's cart manually
+
+        // Save the cart item and convert back to DTO
+        CartItem savedCartItem = cartItemRepository.save(cartItem);
+        CartItemDto savedCartItemDto = new CartItemDto(
+                savedCartItem.getShopId(),
+                savedCartItem.getProductId(),
+                savedCartItem.getQuantity()
+        );
+
+        return ResponseEntity.status(HttpStatus.OK).body(savedCartItemDto);
+
+        //using modelmapper
+//        CartItem cartItem = this.modelMapper.map(cartItemDto, CartItem.class);
+//        cartItem.setPrice(product.getPrice());
+//        cartItem.setCreatedAt(LocalDateTime.now());
+//        cartItem.setCart(user.getCart());
+//        CartItemDto cartItemDto1 = this.modelMapper.map(cartItemRepository.save(cartItem), CartItemDto.class);
+//        return ResponseEntity.status(HttpStatus.OK).body(cartItemDto1);
     }
 }

@@ -8,5 +8,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CartItemService {
     //create or add products on cart from specific shop
-    ResponseEntity<?> addProduct(CartItemDto cartItemDto);
+    ResponseEntity<?> addProduct(Long userId,CartItemDto cartItemDto);
 }

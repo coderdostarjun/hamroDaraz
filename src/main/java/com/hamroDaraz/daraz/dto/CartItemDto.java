@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class CartItemDto {
-    private Long userId;
+//    private Long userId;
     private Long shopId;//kuna pasal bata
     private Long productId;//kuna product kinew
     private int quantity;
