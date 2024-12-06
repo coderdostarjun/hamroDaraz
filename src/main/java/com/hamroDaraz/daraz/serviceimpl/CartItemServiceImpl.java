@@ -2,10 +2,7 @@ package com.hamroDaraz.daraz.serviceimpl;
 
 import com.hamroDaraz.daraz.dto.CartItemDto;
 import com.hamroDaraz.daraz.dto.DeleteResponseDto;
-import com.hamroDaraz.daraz.entity.CartItem;
-import com.hamroDaraz.daraz.entity.Product;
-import com.hamroDaraz.daraz.entity.Shop;
-import com.hamroDaraz.daraz.entity.User;
+import com.hamroDaraz.daraz.entity.*;
 import com.hamroDaraz.daraz.exception.ResourceNotFoundException;
 import com.hamroDaraz.daraz.repository.CartItemRepository;
 import com.hamroDaraz.daraz.repository.ProductRepository;
@@ -43,6 +40,7 @@ public class CartItemServiceImpl implements CartItemService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("The product is not available in this shop.");
         }
+        Cart cart = user.getCart(); // Get the user's cart
         // Check if the same product, shop, and user combination already exists in the cart
         CartItem existingCartItem = cartItemRepository.findByCartIdAndShopIdAndProductId(
                 user.getCart().getId(),
