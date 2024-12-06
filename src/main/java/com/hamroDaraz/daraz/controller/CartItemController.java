@@ -18,4 +18,10 @@ public class CartItemController {
     {
       return cartItemService.addProduct(userId,cartItemDto);
     }
+    //remove product
+    @DeleteMapping("/remove")
+    public ResponseEntity<?> removeProduct(@RequestParam Long userId, @RequestBody CartItemDto cartItemDto)
+    {
+        return cartItemService.removeProduct(userId,cartItemDto);
+    }
 }
